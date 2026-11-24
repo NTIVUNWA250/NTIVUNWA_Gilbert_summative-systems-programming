@@ -1,0 +1,9 @@
+Smart cities use technology to improve public services.
+Traffic lights adjust their timing based on the number of waiting cars.
+Waste bins report when they are full so collection routes can change.
+Street lights dim when nobody is around and brighten when people pass.
+Air quality monitors warn residents when pollution levels rise.
+City planners study the data to decide where to build new roads.
+Citizens can report problems such as broken pipes through mobile apps.
+Open data portals let researchers and students study how the city works.
+Good governance and privacy rules are needed for these systems to succeed.

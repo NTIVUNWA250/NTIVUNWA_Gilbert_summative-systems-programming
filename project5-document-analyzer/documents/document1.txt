@@ -1,0 +1,13 @@
+The Internet of Things (IoT) connects everyday devices to the internet.
+Sensors collect data and send it to cloud services for processing.
+IoT devices include smart thermostats, wearables and security cameras.
+Each device needs a network connection and a way to identify itself.
+
+Security is one of the biggest challenges for IoT systems.
+Weak passwords and outdated firmware leave many devices exposed.
+Manufacturers should provide regular updates for every iot product.
+Users should change default credentials as soon as a device is installed.
+
+Edge computing moves some processing closer to the devices.
+This reduces delay and saves bandwidth for large IoT deployments.
+In summary, IoT brings convenience but needs careful design. IoT IoT.
