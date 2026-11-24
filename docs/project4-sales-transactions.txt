@@ -1,0 +1,69 @@
+Project 4: Sales Transaction Processing and Analysis System in C
+
+1. Overview
+
+This program manages the sales transactions of a small business. Users can add, display, update and delete transactions, run sales operations, filter, search and sort records, generate a sales report, and save or load transactions from a text file (data/transactions.txt). The menu follows the suggested layout, with options 1 to 11 and 0 to exit.
+
+The code is split into modules, each with a header in include/ and a source file in src/: transactions, processing (function pointers), callbacks, search_sort, report, storage, validation, input, display and menu.
+
+2. Program Structure
+
+Transaction: transaction ID, product name, quantity sold, unit price, total amount (quantity x unit price, always recalculated) and date (YYYY-MM-DD).
+TransactionList: a pointer to a dynamic array of Transaction records, the number of records in use (count) and the number of slots allocated (capacity).
+Status: an enum returned by every operation (OK, NO_MEMORY, DUPLICATE, NOT_FOUND, INVALID, FILE_ERROR) so the menu can show a precise message.
+
+[Insert screenshot here]
+Figure 1: The main menu and all transactions.
+
+3. Function Pointers
+
+All sales operations share one signature: double (*SalesOperation)(const TransactionList *list, int *index). The operations are total revenue, average transaction value, highest-value transaction, lowest-value transaction and total units sold. They are stored in a table of SalesOperationEntry records (display name, function name, function pointer). Under "Process Sales Data" the user picks an entry and the program calls it through its pointer with processing_execute(). The output prints which function was called, for example "[function pointer -> op_total_revenue]". The report module builds the whole sales report by calling the same functions through pointers.
+
+[Insert screenshot here]
+Figure 2: Running sales operations through function pointers.
+
+4. Callback Functions
+
+filter_transactions(), count_transactions() and sum_matching_revenue() each receive a callback (TransactionPredicate) and call it for every transaction. The callbacks are:
+is_above_amount and is_below_amount: filter by total amount.
+is_product: transactions for a given product (ignoring case).
+product_contains and has_amount: used by search.
+quantity_at_least: counts transactions that meet a quantity condition.
+Sorting also uses callbacks: sort_transactions() receives compare_by_id, compare_by_product or compare_by_amount and calls it to compare two records. The menu prints which callback is passed, for example "[callback is_above_amount -> filter_transactions]".
+
+[Insert screenshot here]
+Figure 3: Filtering transactions with callbacks.
+
+5. Dynamic Memory Allocation
+
+list_init() allocates space for 4 transactions with calloc(). When the list is full, ensure_capacity() doubles it with realloc(), so adding more transactions than the initial capacity works. Records are accessed and changed through pointers (Transaction * from list_get()). Search and filter results are returned in a newly allocated array of indexes that the caller frees. Every allocation is checked and a failure is reported as "Memory allocation failed." without losing existing data. list_free() releases the array at exit. Valgrind on Ubuntu reported "All heap blocks were freed -- no leaks are possible" and 0 errors.
+
+6. Searching and Sorting
+
+Searching is manual and linear: by transaction ID (returns its position), by product name (case-insensitive, partial match) and by total amount (matches within half a cent). Sorting is a manual insertion sort (no qsort()) by transaction ID, product name or total amount, in ascending or descending order. Insertion sort is stable, so equal records keep their order.
+
+[Insert screenshot here]
+Figure 4: Searching and sorting transactions.
+
+7. Sales Reports
+
+The report shows the total number of transactions, total revenue, average transaction value, the highest and lowest transactions (with their ID, product and date) and total units sold. It then asks for a product and shows the revenue and number of transactions for that product. The report can be saved to a file (see samples/sales_report.txt).
+
+[Insert screenshot here]
+Figure 5: The sales report with revenue for a selected product.
+
+8. File Handling
+
+Transactions are saved one per line as T|id|product|quantity|unit price|date. Saving writes a temporary file first and renames it, so a failed save never destroys the old file. Loading reads into a new list and only replaces the current data when the whole file is valid. A missing file starts the program empty, and an invalid line is reported with its line number. "Load Transactions" asks before discarding unsaved changes, and exit offers to save them.
+
+[Insert screenshot here]
+Figure 6: Saving and loading transactions.
+
+9. Error Handling and Testing
+
+The program rejects duplicate transaction IDs, quantities below 1, prices of 0 or less, impossible dates (for example 2026-02-30), empty product names and invalid menu choices. It handles searches and updates for transactions that do not exist, empty transaction lists, memory allocation failures and file access errors, and it never divides by zero when calculating the average.
+
+Testing uses seven unit test programs (validation, transactions, processing, callbacks, search and sort, report, storage) with 107 checks, and an integration test that drives the real program through the menu, saves, restarts and checks the results. All tests pass on macOS and on Ubuntu with gcc.
+
+[Insert screenshot here]
+Figure 7: make test output showing all tests passed.
