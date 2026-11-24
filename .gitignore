@@ -6,6 +6,3 @@ project3-student-records/student_records
 project4-sales-transactions/sales_system
 project5-document-analyzer/document_analyzer
 project5-document-analyzer/*_report.txt
-project2-linux-health-monitor/logs/
-project2-linux-health-monitor/reports/
-*.dSYM/
