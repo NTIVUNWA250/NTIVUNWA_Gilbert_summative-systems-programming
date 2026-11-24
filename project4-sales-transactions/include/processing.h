@@ -14,6 +14,7 @@ typedef double (*SalesOperation)(const TransactionList *list, int *index);
 
 typedef struct {
     const char *name;
+    const char *symbol;
     SalesOperation run;
     int is_money;
 } SalesOperationEntry;

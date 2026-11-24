@@ -58,11 +58,11 @@ double op_total_units(const TransactionList *list, int *index)
 }
 
 static const SalesOperationEntry operations[] = {
-    {"Calculate total revenue", op_total_revenue, 1},
-    {"Calculate average transaction value", op_average_value, 1},
-    {"Identify highest-value transaction", op_highest_value, 1},
-    {"Identify lowest-value transaction", op_lowest_value, 1},
-    {"Calculate total units sold", op_total_units, 0},
+    {"Calculate total revenue", "op_total_revenue", op_total_revenue, 1},
+    {"Calculate average transaction value", "op_average_value", op_average_value, 1},
+    {"Identify highest-value transaction", "op_highest_value", op_highest_value, 1},
+    {"Identify lowest-value transaction", "op_lowest_value", op_lowest_value, 1},
+    {"Calculate total units sold", "op_total_units", op_total_units, 0},
 };
 
 const SalesOperationEntry *processing_operations(int *count)
