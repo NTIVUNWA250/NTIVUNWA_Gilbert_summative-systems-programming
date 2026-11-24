@@ -18,9 +18,10 @@ build/%: tests/%.c $(CORE_SRC) $(wildcard include/*.h) tests/test_util.h
 	@mkdir -p build
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $< $(CORE_SRC)
 
-test: $(TESTS)
+test: $(TESTS) student_records
 	@for t in $(TESTS); do ./$$t || exit 1; done
-	@echo "All unit tests passed."
+	@sh tests/integration_test.sh
+	@echo "All tests passed."
 
 clean:
 	rm -rf build student_records
