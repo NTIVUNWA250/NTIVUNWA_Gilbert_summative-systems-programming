@@ -1,6 +1,8 @@
 # Project 1: Smart Occupancy Monitoring and Access Control System
 
-Arduino Uno sketch (`occupancy.ino`) for Tinkercad. Two push buttons count
+Arduino Uno sketch (`occupancy.ino`) for Tinkercad, written in C style
+(typedef structs, pointers, calloc/free); only the LCD and Serial calls use
+the Arduino libraries. Two push buttons count
 people entering and leaving, a 16x2 LCD shows occupancy and free space, and a
 green or red LED shows whether the facility is open or full. Maximum
 capacity is 5 (`MAX_CAPACITY`).
