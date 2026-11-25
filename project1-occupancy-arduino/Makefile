@@ -9,6 +9,7 @@ build/test_occupancy: tests/test_occupancy.cpp occupancy.ino tests/mock/Arduino.
 
 test: build/test_occupancy
 	@sh tests/test_includes.sh
+	@sh tests/test_prototypes.sh
 	@./build/test_occupancy
 
 clean:
