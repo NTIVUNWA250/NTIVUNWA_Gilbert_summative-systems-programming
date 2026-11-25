@@ -11,13 +11,10 @@
  * Everything is non-blocking: timing uses millis(), never delay().
  *
  * The program logic is written in C (typedef structs, pointers, calloc/free,
- * stdbool). Only the LCD and Serial calls use the Arduino libraries.
+ * bool). Only the LCD and Serial calls use the Arduino libraries.
  */
+// Tinkercad only accepts library headers; Arduino.h already gives bool, uint8_t, snprintf and calloc.
 #include <LiquidCrystal.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 // ----------------------------------------------------------- configuration
 
@@ -36,7 +33,8 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 // -------------------------------------------------------------- structures
 
-typedef struct {
+/* Function signatures use "struct X" so Tinkercad's auto-generated prototypes compile before these types. */
+typedef struct OccupancyRecord {
   int current;
   int capacity;
   int peak;
@@ -46,7 +44,7 @@ typedef struct {
   unsigned long rejectedExits;
 } OccupancyRecord;
 
-typedef struct {
+typedef struct Button {
   uint8_t pin;
   int stableState;
   int lastReading;
@@ -68,7 +66,7 @@ unsigned long lastStatsMs = 0;
 // ------------------------------------------------- occupancy record logic
 
 /* Allocates a zeroed record on the heap; returns NULL if memory runs out. */
-OccupancyRecord *createOccupancyRecord(int capacity) {
+struct OccupancyRecord *createOccupancyRecord(int capacity) {
   OccupancyRecord *record = (OccupancyRecord *)calloc(1, sizeof(OccupancyRecord));
   if (record != NULL) {
     record->capacity = capacity;
@@ -77,20 +75,20 @@ OccupancyRecord *createOccupancyRecord(int capacity) {
 }
 
 /* Frees the record and clears the caller's pointer so it cannot dangle. */
-void destroyOccupancyRecord(OccupancyRecord **record) {
+void destroyOccupancyRecord(struct OccupancyRecord **record) {
   free(*record);
   *record = NULL;
 }
 
-bool isFull(const OccupancyRecord *record) {
+bool isFull(const struct OccupancyRecord *record) {
   return record->current >= record->capacity;
 }
 
-int remainingCapacity(const OccupancyRecord *record) {
+int remainingCapacity(const struct OccupancyRecord *record) {
   return record->capacity - record->current;
 }
 
-EventResult recordEntry(OccupancyRecord *record) {
+int recordEntry(struct OccupancyRecord *record) {
   if (isFull(record)) {
     record->rejectedEntries++;
     return EVENT_REJECTED_FULL;
@@ -103,7 +101,7 @@ EventResult recordEntry(OccupancyRecord *record) {
   return EVENT_OK;
 }
 
-EventResult recordExit(OccupancyRecord *record) {
+int recordExit(struct OccupancyRecord *record) {
   if (record->current <= 0) {
     record->rejectedExits++;
     return EVENT_REJECTED_EMPTY;
@@ -117,7 +115,7 @@ EventResult recordExit(OccupancyRecord *record) {
 
 /* Returns true once per press. A new reading must stay the same for
  * DEBOUNCE_MS before it is accepted. Buttons use INPUT_PULLUP: LOW = pressed. */
-bool buttonPressed(Button *button, unsigned long nowMs) {
+bool buttonPressed(struct Button *button, unsigned long nowMs) {
   int reading = digitalRead(button->pin);
 
   if (reading != button->lastReading) {
@@ -141,13 +139,13 @@ const char *padLine(const char *text) {
   return padded;
 }
 
-void updateLeds(const OccupancyRecord *record) {
+void updateLeds(const struct OccupancyRecord *record) {
   bool full = isFull(record);
   digitalWrite(GREEN_LED_PIN, full ? LOW : HIGH);
   digitalWrite(RED_LED_PIN, full ? HIGH : LOW);
 }
 
-void updateLcd(const OccupancyRecord *record) {
+void updateLcd(const struct OccupancyRecord *record) {
   char line[17];
 
   snprintf(line, sizeof line, "Inside: %d/%d", record->current, record->capacity);
@@ -163,7 +161,7 @@ void updateLcd(const OccupancyRecord *record) {
   lcd.print(padLine(line));
 }
 
-void printStatus(const OccupancyRecord *record) {
+void printStatus(const struct OccupancyRecord *record) {
   char text[48];
   snprintf(text, sizeof text, " | Inside: %d/%d | Available: %d", record->current,
            record->capacity, remainingCapacity(record));
@@ -176,20 +174,20 @@ void printTimestamp(unsigned long nowMs) {
   Serial.print(text);
 }
 
-void reportEvent(const char *event, const OccupancyRecord *record, unsigned long nowMs) {
+void reportEvent(const char *event, const struct OccupancyRecord *record, unsigned long nowMs) {
   printTimestamp(nowMs);
   Serial.print(event);
   printStatus(record);
 }
 
-void reportError(const char *message, const OccupancyRecord *record, unsigned long nowMs) {
+void reportError(const char *message, const struct OccupancyRecord *record, unsigned long nowMs) {
   printTimestamp(nowMs);
   Serial.print("ERROR: ");
   Serial.print(message);
   printStatus(record);
 }
 
-void reportStatistics(const OccupancyRecord *record, unsigned long nowMs) {
+void reportStatistics(const struct OccupancyRecord *record, unsigned long nowMs) {
   char text[48];
 
   Serial.println("------ OCCUPANCY STATISTICS ------");
@@ -218,7 +216,7 @@ void reportStatistics(const OccupancyRecord *record, unsigned long nowMs) {
 
 // ---------------------------------------------------------- event handlers
 
-void handleEntry(OccupancyRecord *record, unsigned long nowMs) {
+void handleEntry(struct OccupancyRecord *record, unsigned long nowMs) {
   if (recordEntry(record) == EVENT_OK) {
     reportEvent("ENTRY", record, nowMs);
     if (isFull(record)) {
@@ -230,7 +228,7 @@ void handleEntry(OccupancyRecord *record, unsigned long nowMs) {
   updateLeds(record);
 }
 
-void handleExit(OccupancyRecord *record, unsigned long nowMs) {
+void handleExit(struct OccupancyRecord *record, unsigned long nowMs) {
   if (recordExit(record) == EVENT_OK) {
     reportEvent("EXIT ", record, nowMs);
   } else {
