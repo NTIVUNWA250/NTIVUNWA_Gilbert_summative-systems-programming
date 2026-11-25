@@ -11,13 +11,10 @@
  * Everything is non-blocking: timing uses millis(), never delay().
  *
  * The program logic is written in C (typedef structs, pointers, calloc/free,
- * stdbool). Only the LCD and Serial calls use the Arduino libraries.
+ * bool). Only the LCD and Serial calls use the Arduino libraries.
  */
+// Tinkercad only accepts library headers; Arduino.h already gives bool, uint8_t, snprintf and calloc.
 #include <LiquidCrystal.h>
-#include <stdbool.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
 
 // ----------------------------------------------------------- configuration
 

@@ -5,7 +5,10 @@
 #ifndef MOCK_ARDUINO_H
 #define MOCK_ARDUINO_H
 
+// The real Arduino.h brings in these C headers, so the sketch does not include them itself.
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <string>
 
 #define HIGH 1
