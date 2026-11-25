@@ -8,6 +8,7 @@ build/test_occupancy: tests/test_occupancy.cpp occupancy.ino tests/mock/Arduino.
 	$(CXX) $(CXXFLAGS) -Itests/mock -o $@ tests/test_occupancy.cpp
 
 test: build/test_occupancy
+	@sh tests/test_includes.sh
 	@./build/test_occupancy
 
 clean:
