@@ -9,29 +9,34 @@
  *
  * Serial commands: 's' = print statistics, 'r' = reset the occupancy record.
  * Everything is non-blocking: timing uses millis(), never delay().
+ *
+ * The program logic is written in C (typedef structs, pointers, calloc/free,
+ * stdbool). Only the LCD and Serial calls use the Arduino libraries.
  */
 #include <LiquidCrystal.h>
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 // ----------------------------------------------------------- configuration
 
-const uint8_t ENTRY_BUTTON_PIN = 7;
-const uint8_t EXIT_BUTTON_PIN = 8;
-const uint8_t GREEN_LED_PIN = 9;
-const uint8_t RED_LED_PIN = 10;
+#define ENTRY_BUTTON_PIN 7
+#define EXIT_BUTTON_PIN 8
+#define GREEN_LED_PIN 9
+#define RED_LED_PIN 10
 
-const int MAX_CAPACITY = 5;
-const unsigned long DEBOUNCE_MS = 50;
-const unsigned long LCD_REFRESH_MS = 250;
-const unsigned long STATS_INTERVAL_MS = 15000;
+#define MAX_CAPACITY 5
+#define DEBOUNCE_MS 50UL
+#define LCD_REFRESH_MS 250UL
+#define STATS_INTERVAL_MS 15000UL
 
 // LCD wiring: RS, E, D4, D5, D6, D7
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 // -------------------------------------------------------------- structures
 
-struct OccupancyRecord {
+typedef struct {
   int current;
   int capacity;
   int peak;
@@ -39,20 +44,20 @@ struct OccupancyRecord {
   unsigned long totalExits;
   unsigned long rejectedEntries;
   unsigned long rejectedExits;
-};
+} OccupancyRecord;
 
-struct Button {
+typedef struct {
   uint8_t pin;
   int stableState;
   int lastReading;
   unsigned long lastChangeMs;
-};
+} Button;
 
-enum EventResult {
+typedef enum {
   EVENT_OK,
   EVENT_REJECTED_FULL,
   EVENT_REJECTED_EMPTY
-};
+} EventResult;
 
 OccupancyRecord *occupancy = NULL;
 Button entryButton = {ENTRY_BUTTON_PIN, HIGH, HIGH, 0};
@@ -234,7 +239,7 @@ void handleExit(OccupancyRecord *record, unsigned long nowMs) {
   updateLeds(record);
 }
 
-void reportFatal() {
+void reportFatal(void) {
   Serial.println("FATAL: memory allocation failed, system halted.");
   lcd.setCursor(0, 0);
   lcd.print(padLine("MEMORY ERROR"));
@@ -272,7 +277,7 @@ void handleSerialCommand(unsigned long nowMs) {
 
 // ------------------------------------------------------------ setup / loop
 
-void setup() {
+void setup(void) {
   Serial.begin(9600);
   pinMode(ENTRY_BUTTON_PIN, INPUT_PULLUP);
   pinMode(EXIT_BUTTON_PIN, INPUT_PULLUP);
@@ -292,7 +297,7 @@ void setup() {
   updateLcd(occupancy);
 }
 
-void loop() {
+void loop(void) {
   unsigned long nowMs = millis();
 
   if (occupancy == NULL) {
