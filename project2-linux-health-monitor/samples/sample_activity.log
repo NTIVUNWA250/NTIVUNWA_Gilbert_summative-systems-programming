@@ -1,0 +1,12 @@
+[2026-11-24 19:06:52] [INFO] Session started by root
+[2026-11-24 19:06:52] [INFO] Displayed system information
+[2026-11-24 19:06:53] [INFO] CPU check completed (threshold 70%, 0 warning(s))
+[2026-11-24 19:06:53] [INFO] Memory check completed (threshold 10%, 1 warning(s))
+[2026-11-24 19:06:53] [WARNING] Memory usage 10.4% reached the 10% threshold
+[2026-11-24 19:06:53] [INFO] Disk check completed (threshold 50%, 0 warning(s))
+[2026-11-24 19:06:53] [INFO] Process search by name 'sleep': 1 match(es)
+[2026-11-24 19:06:53] [WARNING] Blocked termination of PID 1 (bash): PID 1 is a core system process
+[2026-11-24 19:06:54] [INFO] Terminated process PID 138 (sleep)
+[2026-11-24 19:06:55] [WARNING] Memory usage 10.5% reached the 10% threshold
+[2026-11-24 19:06:55] [INFO] Health report generated: /tmp/reports/health_report_20261124_190654.txt
+[2026-11-24 19:06:55] [INFO] Session ended
