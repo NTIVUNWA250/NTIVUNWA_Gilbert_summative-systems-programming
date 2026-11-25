@@ -1,0 +1,8 @@
+Smart agriculture helps farmers make better decisions with live data.
+Soil moisture sensors tell farmers when crops need water.
+Weather stations report rainfall, temperature and humidity every hour.
+An IoT gateway on the farm forwards readings to a mobile dashboard.
+Farmers in Rwanda use these dashboards to plan irrigation and harvests.
+Drones capture images that show which parts of a field are stressed.
+Combining drone images with IoT sensor data improves crop yields.
+Low-power radio networks let sensors run for years on small batteries.

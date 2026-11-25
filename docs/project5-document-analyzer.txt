@@ -1,0 +1,61 @@
+Project 5: Multi-threaded Document Search and Analysis System in C
+
+1. Overview
+
+This program searches several text files at the same time using POSIX threads (pthreads). The user gives a keyword and a list of files:
+./document_analyzer "IoT" document1.txt document2.txt document3.txt
+The program creates one thread per file. Each thread counts the lines in its file, finds every occurrence of the keyword (ignoring upper and lower case), records the line numbers that contain it, and writes its own report, for example document1_report.txt. The main thread waits for all threads with pthread_join() and then prints a summary.
+
+2. Program Structure
+
+task.c: builds the per-thread arguments (init_thread_tasks) and the report file names, and frees them (free_thread_tasks).
+search.c: count_occurrences() counts keyword matches in one line, and analyze_file() reads a file line by line.
+report.c: write_report() creates the report file for one thread.
+worker.c: process_file() is the thread function, run_threads() creates and joins the threads, and display_results() prints the summary.
+main.c: checks the arguments and runs the steps in order.
+
+3. Thread Arguments and Structures
+
+Each thread receives a pointer to its own ThreadTask structure. It holds the thread number, the input file name, the keyword, the report file name, the results (total lines, occurrences, number of matching lines and a dynamic array of matching line numbers) and the status (pending, completed or failed) with an error message. The tasks are allocated together with calloc(), and the line number array grows with realloc() as matches are found. Because every thread reads and writes only its own ThreadTask, input file and report file, the threads never share data and no mutex or other synchronization is needed. Helgrind (valgrind's thread checker) reported 0 errors, confirming there are no data races.
+
+[Insert screenshot here]
+Figure 1: Running the analyzer on three documents.
+
+4. Searching and Analysis
+
+Files are read with getline(), so lines of any length work. count_occurrences() compares the keyword character by character using tolower(), so "IoT", "iot" and "IOT" all match. Matches do not overlap, and after a match the search continues after the keyword. For each file the thread records:
+The total number of lines.
+The total number of keyword occurrences.
+The number of lines that contain the keyword at least once.
+The line numbers of those lines.
+The results were checked against the Linux grep command and match exactly (document1.txt: 13 lines, 8 occurrences, 6 matching lines on lines 1, 3, 6, 8, 12 and 13).
+
+5. Report Generation
+
+Each thread writes its own report containing the input file name, the keyword, the thread number, the total lines processed, the keyword occurrences, the number of matching lines, the matching line numbers and a processing status. The status is SUCCESS, SUCCESS (keyword not found) when the file has no matches, or FAILED with the reason. Report names come from the input file name (document1.txt becomes document1_report.txt). If two input files have the same name in different folders, the later report gets its thread number added so no report is overwritten.
+
+[Insert screenshot here]
+Figure 2: A generated report file.
+
+6. Thread Status Monitoring
+
+The terminal shows each step: "[Main] Created thread N for file", "[Thread N] Processing file ...", and then either "[Thread N] Successfully processed file" or "[Thread N] Error: reason". Because the threads run at the same time, the order of these lines changes between runs, which shows the files really are processed concurrently. The summary lists every file as Completed (with its counts) or Failed (with the reason).
+
+7. File Handling and Error Management
+
+Missing or unreadable input file: the thread reports "cannot open file (No such file or directory)", writes a report with status FAILED and the other threads continue.
+Report file cannot be created or written: the task is marked failed with the reason.
+Keyword not found: processing succeeds and the report and summary say "keyword not found".
+Thread creation failure: pthread_create() is checked; the file is marked failed and only threads that were created are joined.
+Bad arguments: a missing keyword or file list prints a usage message, and an empty keyword is rejected.
+The exit code is 0 when every file succeeds, 1 for bad arguments and 2 when any file fails.
+
+[Insert screenshot here]
+Figure 3: Error handling for a missing input file.
+
+8. Testing
+
+Four unit test programs cover the keyword counting and file analysis, the report writer, the task setup (including report names) and the thread runner with a mix of good and missing files (58 checks). An integration test runs the real program on the sample documents and checks the terminal output, every report and the exit codes for success, a missing file, missing arguments and an empty keyword. All tests pass on macOS and on Ubuntu with gcc. Valgrind reported no memory leaks and helgrind reported 0 thread errors.
+
+[Insert screenshot here]
+Figure 4: make test output and valgrind/helgrind results.

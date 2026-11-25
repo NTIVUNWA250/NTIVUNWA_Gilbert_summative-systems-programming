@@ -1,0 +1,11 @@
+===== DOCUMENT ANALYSIS REPORT =====
+Input file               : ../documents/document1.txt
+Search keyword           : IoT
+Processed by thread      : 1
+Total lines processed    : 13
+Keyword occurrences      : 8
+Lines containing keyword : 6
+Line numbers with matches:
+  1, 3, 6, 8, 12, 13
+Processing status        : SUCCESS
+====================================
