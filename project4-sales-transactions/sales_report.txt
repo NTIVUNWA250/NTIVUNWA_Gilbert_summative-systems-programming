@@ -1,0 +1,11 @@
+
+=============== SALES REPORT ===============
+Generated: 2026-11-26 19:51:28
+
+Total transactions          : 11
+Total revenue               : 6607.50
+Average transaction value   : 600.68
+Highest transaction value   : 2500.00 (ID 1001, Laptop, 2026-11-02)
+Lowest transaction value    : 37.50 (ID 1010, Wireless Mouse, 2026-11-22)
+Total units sold            : 62
+============================================

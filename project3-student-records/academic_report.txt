@@ -1,0 +1,31 @@
+
+========== ACADEMIC PERFORMANCE REPORT ==========
+Generated: 2026-11-26 19:18:33
+
+Total registered students      : 9
+Total course registrations     : 17
+Students with no courses       : 1
+Overall average performance    : 67.96%
+Highest average                : 1007 Grace Umutoni (95.00%)
+Lowest average                 : 1006 Fabrice Niyonzima (35.67%)
+Students passing (avg >= 50%)  : 6
+Students failing (avg <  50%)  : 2
+
+Average performance per course:
+Code       Course                       Enrolled   Average  Passed
+CS101      Introduction to Programming         5    73.40%       4
+MA101      Calculus I                          2    59.00%       1
+CS102      Computer Systems                    1    91.00%       1
+BU101      Principles of Accounting            2    61.50%       1
+BU201      Marketing                           1    72.00%       1
+SE101      Software Design                     2    50.50%       1
+CS201      Data Structures                     2    61.50%       2
+MA201      Linear Algebra                      1    47.00%       0
+BU102      Business Communication              1    38.00%       0
+
+Students per programme:
+  Computer Science                 3
+  Software Engineering             3
+  Business Administration          2
+  Electrical Engineering           1
+=================================================
